@@ -1,0 +1,23 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "rs-school node.js task",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/getgitgood/file-manager.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/getgitgood/file-manager/issues"
+  },
+  "homepage": "https://github.com/getgitgood/file-manager#readme"
+}
