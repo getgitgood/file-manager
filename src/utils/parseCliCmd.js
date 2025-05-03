@@ -1,5 +1,5 @@
 export const parseCliCmd = (data) => {
-  const [cmd, ...rest] = data.trim().split(" ");
+  const [cmd, ...rest] = data.toString().trim().split(" ");
 
   const args = rest.reduce(
     (acc, item) => {

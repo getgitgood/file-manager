@@ -9,7 +9,7 @@ export const showCurrentDir = (options = {}, withPrompt = true) => {
   };
 
   if (withPrompt)
-    return styleText("grey", `> You are currently in ${homedir()}`);
+    return styleText(["grey", "italic"], `> You are currently in ${homedir()}`);
 
   return path.format(pathObj);
 };

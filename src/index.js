@@ -1,11 +1,17 @@
 import { styleText } from "node:util";
-import { capitalize, showCurrentDir, parseCliCmd } from "./utils/index.js";
+import {
+  capitalize,
+  showCurrentDir,
+  parseCliCmd,
+  messageUser,
+} from "./utils/index.js";
+import { dispatch } from "./modules/dispatch.js";
 
 (async function main() {
   process.username = capitalize(process.env.npm_config_username);
 
   if (!process.username) {
-    console.warn(
+    messageUser(
       `Specify user name in args to start using FileManager! ${styleText(
         "grey",
         "(e.g. npm run start -- --username=goa)"
@@ -15,20 +21,39 @@ import { capitalize, showCurrentDir, parseCliCmd } from "./utils/index.js";
     return;
   }
 
-  console.log(`Welcome to the File Manager, ${process.username}!\n`);
-  const userNoticeMsg =
-    "To proceed enter command in cli and wait for execution results.\n";
+  messageUser(
+    styleText("bgWhite", `Welcome to the File Manager, ${process.username}!`)
+  );
+  const userNoticeMsg = styleText(
+    "italic",
+    "To proceed enter command in a CLI and wait for execution results.\n"
+  );
 
-  console.log(userNoticeMsg);
-  console.log(showCurrentDir());
+  messageUser(`${userNoticeMsg}${showCurrentDir()}`);
 
   process.stdin.on("data", (data) => {
-    console.log(parseCliCmd(data.toString()));
+    const { cmd, ...params } = parseCliCmd(data);
 
+    if (cmd === ".exit") {
+      process.emit("SIGINT");
+
+      return;
+    }
+
+    dispatch({ cmd, ...params });
     // on end
-    process.stdout.write(`${userNoticeMsg}${showCurrentDir()}\n`);
+
+    if (data.toString()) messageUser(`${userNoticeMsg}${showCurrentDir()}`);
   });
 
-  // process.stdin.pipe(process.stdout);
-  // await pipeline(process.stdin, process.stdout);
+  process.on("SIGINT", () => {
+    messageUser(
+      styleText(
+        "bgBlackBright",
+        `Thank you for using File Manager, ${process.username}, goodbye!`
+      )
+    );
+
+    process.exit();
+  });
 })();
