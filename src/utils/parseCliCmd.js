@@ -1,4 +1,4 @@
-export const parseCliCmd = (data) => {
+export const parseCliCmd = (data, state) => {
   const [cmd, ...rest] = data.toString().trim().split(" ");
 
   const args = rest.reduce(
@@ -10,6 +10,8 @@ export const parseCliCmd = (data) => {
     },
     { args: [], flags: [] }
   );
+
+  state.cliCmd = { cmd, ...args };
 
   return { cmd, ...args };
 };

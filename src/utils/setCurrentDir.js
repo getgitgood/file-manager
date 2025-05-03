@@ -1,17 +1,21 @@
 import { homedir } from "os";
 import path from "path";
 import { styleText } from "util";
+import { getState, messageUser } from "./index.js";
 
-export const showCurrentDir = (options = {}, withPrompt = true) => {
+export const setCurrentDir = (state, options = {}, withPrompt = true) => {
   const pathObj = {
     root: homedir(),
     ...options,
   };
 
-  if (withPrompt)
-    return styleText(["grey", "italic"], `> You are currently in ${homedir()}`);
+  state.currentDir = path.format(pathObj);
 
-  return path.format(pathObj);
+  messageUser(
+    styleText(["grey", "italic"], `> You are currently in ${state.currentDir}`)
+  );
+
+  return state.currentDir;
 };
 
 /*
