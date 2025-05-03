@@ -46,10 +46,11 @@ import { dispatch } from "./modules/dispatch.js";
       return;
     }
 
-    dispatch({ cmd, ...params });
+    await dispatch({ cmd, ...params });
     // on end
 
-    if (data.toString()) messageUser(userNoticeMsg);
+    messageUser(userNoticeMsg);
+    setCurrentDir(state, {}, true);
   });
 
   process.on("SIGINT", () => {

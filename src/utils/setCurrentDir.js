@@ -3,7 +3,16 @@ import path from "path";
 import { styleText } from "util";
 import { getState, messageUser } from "./index.js";
 
-export const setCurrentDir = (state, options = {}, withPrompt = true) => {
+export const setCurrentDir = (state, options = {}, promptOnly = false) => {
+  const getPrompt = (dir) =>
+    styleText(["grey", "italic"], `> You are currently in ${dir}`);
+
+  if (promptOnly) {
+    messageUser(getPrompt(state.currentDir));
+
+    return;
+  }
+
   const pathObj = {
     root: homedir(),
     ...options,
@@ -11,10 +20,7 @@ export const setCurrentDir = (state, options = {}, withPrompt = true) => {
 
   state.currentDir = path.format(pathObj);
 
-  messageUser(
-    styleText(["grey", "italic"], `> You are currently in ${state.currentDir}`)
-  );
-
+  messageUser(getPrompt(state.currentDir));
   return state.currentDir;
 };
 
