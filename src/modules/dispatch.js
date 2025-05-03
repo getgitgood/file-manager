@@ -3,7 +3,7 @@ import { navigate } from "./navigate.js";
 
 export function dispatch({ cmd, ...params }) {
   if (!cmd) {
-    messageUser("No cmd provided");
+    messageUser("No cmd provided", true);
 
     return;
   }
@@ -14,6 +14,6 @@ export function dispatch({ cmd, ...params }) {
 
       break;
     default:
-      messageUser("asda", true);
+      messageUser("Invalid input", true);
   }
 }
