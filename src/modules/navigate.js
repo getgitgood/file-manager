@@ -48,6 +48,9 @@ export async function navigate({ cmd, args }) {
 
         break;
       }
+
+      default:
+        break;
     }
   });
 }

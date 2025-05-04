@@ -1,5 +1,5 @@
 import { messageUser } from "../utils/index.js";
-import { navigate } from "./navigate.js";
+import { navigate, files } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) {
@@ -20,7 +20,7 @@ export async function dispatch({ cmd, ...params }) {
     }
   } catch (e) {
     let message = e;
-    if ("message" in e) message = e.message;
+    if (e instanceof Error && "message" in e) message = e.message;
 
     messageUser(message, true);
   }
