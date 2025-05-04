@@ -7,13 +7,19 @@ export async function dispatch({ cmd, ...params }) {
 
     return;
   }
+  try {
+    switch (cmd) {
+      case "cd":
+      case "up":
+      case "ls":
+        return await navigate({ cmd, ...params });
+      default:
+        messageUser("Invalid input", true);
+    }
+  } catch (e) {
+    let message = e;
+    if ("message" in e) message = e.message;
 
-  switch (cmd) {
-    case "cd":
-    case "up":
-    case "ls":
-      return await navigate({ cmd, ...params });
-    default:
-      messageUser("Invalid input", true);
+    messageUser(message, true);
   }
 }
