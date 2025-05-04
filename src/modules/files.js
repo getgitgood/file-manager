@@ -1,11 +1,12 @@
 import path from "path";
 import { getState, messageUser } from "../utils/index.js";
 import { createReadStream } from "fs";
+import { writeFile } from "fs/promises";
 
 export async function files({ cmd, args }) {
   const { currentDir } = await getState();
 
-  return new Promise((res, rej) => {
+  return new Promise(async (res, rej) => {
     switch (cmd) {
       case "cat": {
         messageUser("\n");
@@ -20,6 +21,25 @@ export async function files({ cmd, args }) {
         });
 
         readStream.on("error", () => rej("Operation failed"));
+      }
+
+      case "add": {
+        try {
+          const fileName = args.join(" ");
+          const filePath = path.join(currentDir, fileName);
+
+          await writeFile(filePath, "", { flag: "w" });
+
+          messageUser(`File ${fileName} created successfully.`, "success");
+
+          res();
+        } catch {
+          rej("Operation failed");
+        }
+      }
+
+      case 'mkdir': {
+
       }
     }
   });

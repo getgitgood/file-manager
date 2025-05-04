@@ -3,10 +3,11 @@ import { navigate, files } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) {
-    messageUser("No cmd provided", true);
+    messageUser("No cmd provided", 'error');
 
     return;
   }
+
   try {
     switch (cmd) {
       case "cd":
@@ -14,14 +15,17 @@ export async function dispatch({ cmd, ...params }) {
       case "ls":
         return await navigate({ cmd, ...params });
       case "cat":
+      case "add":
         return await files({ cmd, ...params });
       default:
-        messageUser("Invalid input", true);
+        messageUser("Invalid input", 'error');
+
+        break;
     }
   } catch (e) {
     let message = e;
     if (e instanceof Error && "message" in e) message = e.message;
 
-    messageUser(message, true);
+    messageUser(message, 'error');
   }
 }

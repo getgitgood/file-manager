@@ -1,7 +1,7 @@
 import { homedir } from "os";
 import path from "path";
 import { styleText } from "util";
-import { getState, messageUser } from "./index.js";
+import { messageUser } from "./index.js";
 
 export const setCurrentDir = (state, options = {}, promptOnly = false) => {
   const getPrompt = (dir) =>

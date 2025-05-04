@@ -21,7 +21,11 @@ export async function navigate({ cmd, args }) {
         const dirPath = path.resolve(state.currentDir, args.join(" "));
 
         readdir(dirPath, { withFileTypes: true }, (err) => {
-          if (err) rej(`${rejPrompt} ${dirPath}`);
+          if (err) {
+            rej(`${rejPrompt} ${dirPath}`);
+
+            return;
+          }
 
           const pathObj = path.parse(dirPath);
           setCurrentDir(state, pathObj);
