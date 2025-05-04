@@ -2,8 +2,9 @@ import path from "path";
 import { getState, messageUser, setCurrentDir } from "../utils/index.js";
 import { readdir } from "fs";
 
-export async function navigate({ cmd, args, flags }) {
+export async function navigate({ cmd, args }) {
   const state = await getState();
+  const rejPrompt = `No directory found by path`;
 
   return new Promise((res, rej) => {
     switch (cmd) {
@@ -17,21 +18,13 @@ export async function navigate({ cmd, args, flags }) {
       }
 
       case "cd": {
-        const dirPath = path.resolve(state.currentDir, ...args);
+        const dirPath = path.resolve(state.currentDir, args.join(" "));
 
-        readdir(dirPath, { withFileTypes: true }, (err, files) => {
-          if (err) {
-            messageUser(`No directory found by path ${dirPath}`, true);
+        readdir(dirPath, { withFileTypes: true }, (err) => {
+          if (err) rej(`${rejPrompt} ${dirPath}`);
 
-            rej();
-          }
-
-          if (files?.length) {
-            const pathObj = path.parse(dirPath);
-            setCurrentDir(state, pathObj);
-          } else {
-            setCurrentDir(state, {}, true);
-          }
+          const pathObj = path.parse(dirPath);
+          setCurrentDir(state, pathObj);
 
           res();
         });
@@ -41,11 +34,7 @@ export async function navigate({ cmd, args, flags }) {
 
       case "ls": {
         readdir(state.currentDir, { withFileTypes: true }, (err, files) => {
-          if (err) {
-            messageUser(`No directory found by path ${dirPath}`, true);
-
-            rej();
-          }
+          if (err) rej(`${rejPrompt} ${dirPath}`);
 
           const tableData = files.map((value) => ({
             Name: value.name,

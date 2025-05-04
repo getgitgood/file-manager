@@ -13,6 +13,8 @@ export async function dispatch({ cmd, ...params }) {
       case "up":
       case "ls":
         return await navigate({ cmd, ...params });
+      case "cat":
+        return await files({ cmd, ...params });
       default:
         messageUser("Invalid input", true);
     }
