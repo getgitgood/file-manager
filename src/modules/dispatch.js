@@ -14,6 +14,9 @@ export async function dispatch({ cmd, ...params }) {
       case "add":
       case "mkdir":
       case "rn":
+      case "cp":
+      case "mv":
+      case "rm":
         return await files({ cmd, ...params });
       default:
         messageUser("Invalid input", "error");
@@ -24,6 +27,6 @@ export async function dispatch({ cmd, ...params }) {
     let message = e;
     if (e instanceof Error && "message" in e) message = e.message;
 
-    messageUser(`Operation failed: ${message}`, "error");
+    messageUser(`Operation failed. ${message}`, "error");
   }
 }
