@@ -2,11 +2,7 @@ import { messageUser } from "../utils/index.js";
 import { navigate, files } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
-  if (!cmd) {
-    messageUser("No cmd provided", "error");
-
-    return;
-  }
+  if (!cmd) return;
 
   try {
     switch (cmd) {
@@ -17,6 +13,7 @@ export async function dispatch({ cmd, ...params }) {
       case "cat":
       case "add":
       case "mkdir":
+      case "rn":
         return await files({ cmd, ...params });
       default:
         messageUser("Invalid input", "error");
@@ -27,6 +24,6 @@ export async function dispatch({ cmd, ...params }) {
     let message = e;
     if (e instanceof Error && "message" in e) message = e.message;
 
-    messageUser(message, "error");
+    messageUser(`Operation failed: ${message}`, "error");
   }
 }

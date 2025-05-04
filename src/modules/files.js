@@ -1,13 +1,13 @@
 import path from "path";
 import { getState, messageUser } from "../utils/index.js";
 import { createReadStream } from "fs";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, rename } from "fs/promises";
 
 export async function files({ cmd, args }) {
   const { currentDir } = await getState();
 
-  const fileName = args.join(" ");
-  const filePath = path.join(currentDir, fileName);
+  const filename = args.join(" ");
+  const filePath = path.join(currentDir, filename);
 
   return new Promise(async (res, rej) => {
     switch (cmd) {
@@ -30,11 +30,11 @@ export async function files({ cmd, args }) {
         try {
           await writeFile(filePath, "", { flag: "wx" });
 
-          messageUser(`File "${fileName}" created successfully.`, "success");
+          messageUser(`File "${filename}" created successfully.`, "success");
 
           res();
         } catch {
-          rej("Operation failed, file already exists");
+          rej("File already exists");
         }
       }
 
@@ -43,13 +43,42 @@ export async function files({ cmd, args }) {
           await mkdir(filePath);
 
           messageUser(
-            `Directory "${fileName}" created successfully.`,
+            `Directory "${filename}" created successfully.`,
             "success"
           );
 
           res();
         } catch {
-          rej("Operation failed, directory already exists");
+          rej("Directory already exists");
+        }
+      }
+
+      case "rn": {
+        try {
+          if (args.length <= 1) {
+            rej("Specify filename in order to rename file");
+
+            return;
+          }
+
+          const filename = args[args.length - 1];
+          const initFilePath = args.slice(0, -1).join(" ");
+
+          const dirPath = path.resolve(currentDir, initFilePath);
+          const newPath = path.parse(initFilePath);
+          newPath.name = filename;
+          newPath.base = filename;
+
+          await rename(dirPath, path.resolve(currentDir, path.format(newPath)));
+
+          messageUser(
+            `File renamed to "${filename}".`,
+            "success"
+          );
+
+          res();
+        } catch (e) {
+          rej(e)
         }
       }
     }
