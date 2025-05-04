@@ -3,7 +3,7 @@ import { navigate, files } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) {
-    messageUser("No cmd provided", 'error');
+    messageUser("No cmd provided", "error");
 
     return;
   }
@@ -16,9 +16,10 @@ export async function dispatch({ cmd, ...params }) {
         return await navigate({ cmd, ...params });
       case "cat":
       case "add":
+      case "mkdir":
         return await files({ cmd, ...params });
       default:
-        messageUser("Invalid input", 'error');
+        messageUser("Invalid input", "error");
 
         break;
     }
@@ -26,6 +27,6 @@ export async function dispatch({ cmd, ...params }) {
     let message = e;
     if (e instanceof Error && "message" in e) message = e.message;
 
-    messageUser(message, 'error');
+    messageUser(message, "error");
   }
 }

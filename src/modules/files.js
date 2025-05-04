@@ -1,10 +1,13 @@
 import path from "path";
 import { getState, messageUser } from "../utils/index.js";
 import { createReadStream } from "fs";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 
 export async function files({ cmd, args }) {
   const { currentDir } = await getState();
+
+  const fileName = args.join(" ");
+  const filePath = path.join(currentDir, fileName);
 
   return new Promise(async (res, rej) => {
     switch (cmd) {
@@ -25,21 +28,29 @@ export async function files({ cmd, args }) {
 
       case "add": {
         try {
-          const fileName = args.join(" ");
-          const filePath = path.join(currentDir, fileName);
+          await writeFile(filePath, "", { flag: "wx" });
 
-          await writeFile(filePath, "", { flag: "w" });
-
-          messageUser(`File ${fileName} created successfully.`, "success");
+          messageUser(`File "${fileName}" created successfully.`, "success");
 
           res();
         } catch {
-          rej("Operation failed");
+          rej("Operation failed, file already exists");
         }
       }
 
-      case 'mkdir': {
+      case "mkdir": {
+        try {
+          await mkdir(filePath);
 
+          messageUser(
+            `Directory "${fileName}" created successfully.`,
+            "success"
+          );
+
+          res();
+        } catch {
+          rej("Operation failed, directory already exists");
+        }
       }
     }
   });
