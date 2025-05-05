@@ -38,7 +38,7 @@ export function system({ args, flags }) {
         messageUser(
           flag === "--homedir"
             ? `Home directory is ${homedir}`
-            : `Current session username  is ${username}`,
+            : `Current system username  is ${username}`,
           "success"
         );
 

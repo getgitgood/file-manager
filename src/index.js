@@ -34,13 +34,6 @@ import { dispatch } from "./modules/dispatch.js";
     "To proceed enter command in a CLI and wait for execution results."
   );
 
-  const quotesNoticeMsg = (color) =>
-    styleText(
-      color,
-      `tip: to handle paths separated by whitespaces use double quotes (e.g. cd  C:/"Program Files").`
-    );
-
-  messageUser(`${quotesNoticeMsg("doubleunderline")}`);
   messageUser(userNoticeMsg);
   setCurrentDir(state, {});
   setCurrentDir(state, {}, true);
@@ -61,7 +54,6 @@ import { dispatch } from "./modules/dispatch.js";
       messageUser(e, "error");
     } finally {
       messageUser(userNoticeMsg);
-      messageUser(quotesNoticeMsg("dim"));
       setCurrentDir(state, {}, true);
     }
   });
@@ -73,7 +65,7 @@ import { dispatch } from "./modules/dispatch.js";
         `Thank you for using File Manager, ${state.username}, goodbye!`
       )
     );
-    console.log(state);
+
     process.exit();
   });
 })();
