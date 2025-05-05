@@ -1,5 +1,5 @@
 import { messageUser } from "../utils/index.js";
-import { navigate, files, system } from "./index.js";
+import { navigation, files, system, hash } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) return;
@@ -9,7 +9,7 @@ export async function dispatch({ cmd, ...params }) {
       case "cd":
       case "up":
       case "ls":
-        return await navigate({ cmd, ...params });
+        return await navigation({ cmd, ...params });
       case "cat":
       case "add":
       case "mkdir":
@@ -20,6 +20,8 @@ export async function dispatch({ cmd, ...params }) {
         return await files({ cmd, ...params });
       case "os":
         return await system({ ...params });
+      case "hash":
+        return await hash({ ...params });
       default:
         messageUser("Invalid input", "error");
 

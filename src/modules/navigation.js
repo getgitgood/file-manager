@@ -1,8 +1,8 @@
 import path from "path";
-import { getState, messageUser, setCurrentDir } from "../utils/index.js";
+import { getState, setCurrentDir } from "../utils/index.js";
 import { readdir } from "fs";
 
-export async function navigate({ cmd, args }) {
+export async function navigation({ cmd, args }) {
   const state = await getState();
   const rejPrompt = `No directory found by path`;
 
