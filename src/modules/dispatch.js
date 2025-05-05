@@ -1,5 +1,5 @@
 import { messageUser } from "../utils/index.js";
-import { navigation, files, system, hash } from "./index.js";
+import { navigation, files, system, hash, archiver } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) return;
@@ -22,6 +22,9 @@ export async function dispatch({ cmd, ...params }) {
         return await system({ ...params });
       case "hash":
         return await hash({ ...params });
+      case "compress":
+      case "decompress":
+        return await archiver({ cmd, ...params });
       default:
         messageUser("Invalid input", "error");
 

@@ -6,6 +6,7 @@ const state = {
     args: [],
     flags: [],
   },
+  compressedFilesLog: [],
 };
 
 export default state;
