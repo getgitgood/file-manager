@@ -35,8 +35,8 @@ import { dispatch } from "./modules/dispatch.js";
   );
 
   messageUser(userNoticeMsg);
-  setCurrentDir(state);
-
+  setCurrentDir(state, {});
+  setCurrentDir(state, {}, true);
   process.stdin.on("data", async (data) => {
     const { cmd, ...params } = parseCliCmd(data, state);
 
@@ -47,7 +47,6 @@ import { dispatch } from "./modules/dispatch.js";
     }
 
     await dispatch({ cmd, ...params });
-    // on end
 
     messageUser(userNoticeMsg);
     setCurrentDir(state, {}, true);
@@ -60,7 +59,6 @@ import { dispatch } from "./modules/dispatch.js";
         `Thank you for using File Manager, ${state.username}, goodbye!`
       )
     );
-    console.log(state);
 
     process.exit();
   });

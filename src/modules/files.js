@@ -1,5 +1,5 @@
 import path from "path";
-import { getState, messageUser } from "../utils/index.js";
+import { getState, messageUser, mkDirOnENOENT } from "../utils/index.js";
 import { createReadStream, createWriteStream } from "fs";
 import { writeFile, mkdir, rename, lstat, unlink, rm } from "fs/promises";
 import { pipeline } from "stream/promises";
@@ -144,6 +144,13 @@ export async function files({ cmd, args }) {
 
           break;
         } catch (e) {
+          if (await mkDirOnENOENT(e, newPath)) {
+            await files({ cmd, args });
+            res();
+
+            break;
+          }
+
           rej(e);
         }
       }
@@ -153,7 +160,7 @@ export async function files({ cmd, args }) {
 
           await rm(rmPath, { recursive: true });
 
-          messageUser(`File at path "${rmPath}" was removed.`, "success");
+          messageUser(`"${path.parse(rmPath).base}" was removed.`, "success");
 
           res();
 

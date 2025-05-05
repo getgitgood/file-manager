@@ -1,6 +1,6 @@
 import path from "path";
 import { createBrotliCompress, constants, createBrotliDecompress } from "zlib";
-import { getState, messageUser } from "../utils/index.js";
+import { getState, messageUser, mkDirOnENOENT } from "../utils/index.js";
 import { createReadStream, createWriteStream } from "fs";
 import { pipeline } from "stream/promises";
 
@@ -13,20 +13,22 @@ export async function archiver({ cmd, args }) {
 
       return;
     }
+
+    const [from, to] = args;
+    const pathFrom = path.resolve(state.currentDir, from);
+    const { base, ext } = path.parse(pathFrom);
+    const readStream = createReadStream(pathFrom);
+
     try {
       switch (cmd) {
         case "compress":
-          const [from, to] = args;
-
-          const pathFrom = path.resolve(state.currentDir, from);
-          const { base, ext } = path.parse(pathFrom);
           const pathTo = path.resolve(
             state.currentDir,
-            path.join(to, base.replace(ext, ".br"))
+            path.join(to, ext ? base.replace(ext, ".br") : `${base}.br`)
           );
 
           const compressStream = createBrotliCompress();
-          const readStream = createReadStream(pathFrom);
+
           const writeStream = createWriteStream(pathTo);
 
           state.compressedFilesLog.push({
@@ -44,10 +46,6 @@ export async function archiver({ cmd, args }) {
           break;
 
         case "decompress": {
-          const [from, to] = args;
-
-          const pathFrom = path.resolve(state.currentDir, from);
-          const { base, ext } = path.parse(pathFrom);
           const previouslyCompressed = state.compressedFilesLog.find(
             ({ filename }) => filename === base.replace(ext, "")
           );
@@ -61,7 +59,7 @@ export async function archiver({ cmd, args }) {
               [constants.BROTLI_PARAM_MODE]: constants.BROTLI_MODE_TEXT,
             },
           });
-          const readStream = createReadStream(pathFrom);
+
           const writeStream = createWriteStream(pathTo);
 
           await pipeline(readStream, decompressStream, writeStream);
@@ -81,6 +79,11 @@ export async function archiver({ cmd, args }) {
           break;
       }
     } catch (e) {
+      if (await mkDirOnENOENT(e, path.resolve(state.currentDir, to))) {
+        await archiver({ cmd, args });
+        res();
+      }
+
       rej(e);
     }
   });

@@ -20,7 +20,6 @@ export const setCurrentDir = (state, options = {}, promptOnly = false) => {
 
   state.currentDir = path.format(pathObj);
 
-  messageUser(getPrompt(state.currentDir));
   return state.currentDir;
 };
 
