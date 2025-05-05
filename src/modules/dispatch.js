@@ -1,5 +1,5 @@
 import { messageUser } from "../utils/index.js";
-import { navigate, files } from "./index.js";
+import { navigate, files, system } from "./index.js";
 
 export async function dispatch({ cmd, ...params }) {
   if (!cmd) return;
@@ -18,6 +18,8 @@ export async function dispatch({ cmd, ...params }) {
       case "mv":
       case "rm":
         return await files({ cmd, ...params });
+      case "os":
+        return await system({ ...params });
       default:
         messageUser("Invalid input", "error");
 
@@ -25,8 +27,9 @@ export async function dispatch({ cmd, ...params }) {
     }
   } catch (e) {
     let message = e;
-    if (e instanceof Error && "message" in e) message = e.message;
+    if (e instanceof Error && "message" in e)
+      message = `Operation failed. ${message}`;
 
-    messageUser(`Operation failed. ${message}`, "error");
+    messageUser(message, "error");
   }
 }
