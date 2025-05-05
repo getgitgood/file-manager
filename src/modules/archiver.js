@@ -1,6 +1,6 @@
 import path from "path";
 import { createBrotliCompress, constants, createBrotliDecompress } from "zlib";
-import { getState, messageUser, mkDirOnENOENT } from "../utils/index.js";
+import { getState, messageUser } from "../utils/index.js";
 import { createReadStream, createWriteStream } from "fs";
 import { pipeline } from "stream/promises";
 
@@ -79,11 +79,6 @@ export async function archiver({ cmd, args }) {
           break;
       }
     } catch (e) {
-      if (await mkDirOnENOENT(e, path.resolve(state.currentDir, to))) {
-        await archiver({ cmd, args });
-        res();
-      }
-
       rej(e);
     }
   });
