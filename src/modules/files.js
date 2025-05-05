@@ -1,6 +1,6 @@
 import path from "path";
 import { getState, messageUser } from "../utils/index.js";
-import { createReadStream, createWriteStream, fstat } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import { writeFile, mkdir, rename, lstat, unlink, rm } from "fs/promises";
 import { pipeline } from "stream/promises";
 
@@ -67,22 +67,30 @@ export async function files({ cmd, args }) {
           newPath.name = filename;
           newPath.base = filename;
 
-          const stat = await lstat(
-            path.resolve(currentDir, path.format(newPath))
-          );
+          try {
+            const stat = await lstat(
+              path.resolve(currentDir, path.format(newPath))
+            );
 
-          if (stat.isFile() || stat.isDirectory()) {
-            rej("Operation failed. File with a same name already exist in directory");
+            if (stat.isFile() || stat.isDirectory()) {
+              rej(
+                "Operation failed. File with a same name already exist in directory"
+              );
+
+              break;
+            }
+          } catch {
+            await rename(
+              dirPath,
+              path.resolve(currentDir, path.format(newPath))
+            );
+
+            messageUser(`File renamed to "${filename}".`, "success");
+
+            res();
 
             break;
           }
-          await rename(dirPath, path.resolve(currentDir, path.format(newPath)));
-
-          messageUser(`File renamed to "${filename}".`, "success");
-
-          res();
-
-          break;
         }
         case "cp":
         case "mv": {
@@ -108,7 +116,9 @@ export async function files({ cmd, args }) {
 
           if (baselessPath === newPath) {
             rej(
-              `Operation failed. Base and ${isMvOperation ? "move" : "copy"} paths are identical.`
+              `Operation failed. Base and ${
+                isMvOperation ? "move" : "copy"
+              } paths are identical.`
             );
 
             return;
@@ -117,7 +127,9 @@ export async function files({ cmd, args }) {
           const stat = await lstat(newPath);
 
           if (!stat.isDirectory()) {
-            rej("Operation failed. Expect destination to be a directory, got file instead.");
+            rej(
+              "Operation failed. Expect destination to be a directory, got file instead."
+            );
 
             return;
           }
