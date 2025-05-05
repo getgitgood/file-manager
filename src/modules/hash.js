@@ -24,7 +24,9 @@ export async function hash({ args }) {
 
       readStream.on("end", () => {
         messageUser(
-          `Hash for file ${filePath} is "${hashFn.digest("hex")}"`,
+          `Hash for file "${path.parse(filePath).base}" is "${hashFn.digest(
+            "hex"
+          )}"`,
           "success"
         );
 
