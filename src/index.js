@@ -34,22 +34,36 @@ import { dispatch } from "./modules/dispatch.js";
     "To proceed enter command in a CLI and wait for execution results."
   );
 
+  const quotesNoticeMsg = (color) =>
+    styleText(
+      color,
+      `tip: to handle paths separated by whitespaces use double quotes (e.g. cd  C:/"Program Files").`
+    );
+
+  messageUser(`${quotesNoticeMsg("doubleunderline")}`);
   messageUser(userNoticeMsg);
   setCurrentDir(state, {});
   setCurrentDir(state, {}, true);
+
   process.stdin.on("data", async (data) => {
-    const { cmd, ...params } = parseCliCmd(data, state);
+    try {
+      const { cmd, ...params } = await parseCliCmd(data, state);
 
-    if (cmd === ".exit") {
-      process.emit("SIGINT");
+      if (cmd === ".exit") {
+        process.emit("SIGINT");
 
-      return;
+        return;
+      }
+
+      await dispatch({ cmd, ...params });
+    } catch (e) {
+      if (e instanceof Error) messageUser(e.message, "error");
+      messageUser(e, "error");
+    } finally {
+      messageUser(userNoticeMsg);
+      messageUser(quotesNoticeMsg("dim"));
+      setCurrentDir(state, {}, true);
     }
-
-    await dispatch({ cmd, ...params });
-
-    messageUser(userNoticeMsg);
-    setCurrentDir(state, {}, true);
   });
 
   process.on("SIGINT", () => {
@@ -59,7 +73,7 @@ import { dispatch } from "./modules/dispatch.js";
         `Thank you for using File Manager, ${state.username}, goodbye!`
       )
     );
-
+    console.log(state);
     process.exit();
   });
 })();

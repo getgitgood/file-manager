@@ -8,7 +8,7 @@ export async function getState() {
 
     return state;
   } catch (e) {
-    messageUser("Cannot get state from ../state/state.js", true);
+    messageUser("Cannot get state from ../state/state.js", "error");
 
     return {};
   }

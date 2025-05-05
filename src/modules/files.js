@@ -8,7 +8,7 @@ export async function files({ cmd, args }) {
   const { currentDir } = await getState();
 
   const filename = args.join(" ");
-  const filePath = path.join(currentDir, filename);
+  const filePath = path.resolve(currentDir, filename);
 
   return new Promise(async (res, rej) => {
     switch (cmd) {
@@ -32,14 +32,13 @@ export async function files({ cmd, args }) {
       case "add": {
         try {
           await writeFile(filePath, "", { flag: "wx" });
-
           messageUser(`File "${filename}" created successfully.`, "success");
 
           res();
 
           break;
-        } catch {
-          rej("File already exists");
+        } catch (e) {
+          rej(e);
         }
       }
 
@@ -55,8 +54,8 @@ export async function files({ cmd, args }) {
           res();
 
           break;
-        } catch {
-          rej("Directory already exists");
+        } catch (e) {
+          rej(e);
         }
       }
 
@@ -136,7 +135,7 @@ export async function files({ cmd, args }) {
           if (isMvOperation) await unlink(dirPath);
 
           messageUser(
-            `File ${isMvOperation ? "moved" : "copied"} to "${newPath}".`,
+            `File was ${isMvOperation ? "moved" : "copied"} to "${newPath}".`,
             "success"
           );
 
@@ -144,6 +143,7 @@ export async function files({ cmd, args }) {
 
           break;
         } catch (e) {
+          console.log(e)
           rej(e);
         }
       }

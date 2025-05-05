@@ -11,6 +11,8 @@ export function system({ args, flags }) {
         messageUser(`Operating system EOL - ${JSON.stringify(EOL)}`, "success");
 
         res();
+
+        break;
       }
 
       case "--cpus": {
@@ -21,10 +23,12 @@ export function system({ args, flags }) {
         console.table(cpusArr);
         messageUser(
           `                    ${cpusArr.length} CPUS detected in total.                   `,
-          "success "
+          "success"
         );
 
         res();
+
+        break;
       }
 
       case "--homedir":
@@ -34,21 +38,27 @@ export function system({ args, flags }) {
         messageUser(
           flag === "--homedir"
             ? `Home directory is ${homedir}`
-            : `Current OS username is ${username}`,
+            : `Current session username  is ${username}`,
           "success"
         );
 
         res();
+
+        break;
       }
 
       case "--architecture": {
         messageUser(`CPU architecture is ${arch()}`, "success");
 
         res();
+
+        break;
       }
 
       default: {
-        rej(`Invalid input.${arg ? `Do you mean --${arg}?` : ""}`);
+        rej(`Invalid input. ${arg ? `Do you mean --${arg}?` : ""}`);
+
+        break;
       }
     }
   });

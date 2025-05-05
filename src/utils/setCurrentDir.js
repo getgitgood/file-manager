@@ -5,7 +5,7 @@ import { messageUser } from "./index.js";
 
 export const setCurrentDir = (state, options = {}, promptOnly = false) => {
   const getPrompt = (dir) =>
-    styleText(["grey", "italic"], `> You are currently in ${dir}`);
+    styleText(["dim", "italic"], `> You are currently in ${dir}`);
 
   if (promptOnly) {
     messageUser(getPrompt(state.currentDir));
@@ -22,15 +22,3 @@ export const setCurrentDir = (state, options = {}, promptOnly = false) => {
 
   return state.currentDir;
 };
-
-/*
-TODO: remove in final version
-from node docs:
-
-pathObject <Object> Any JavaScript object having the following properties:
-dir <string>
-root <string>
-base <string>
-name <string>
-ext <string>
-*/

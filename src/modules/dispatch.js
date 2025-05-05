@@ -33,7 +33,7 @@ export async function dispatch({ cmd, ...params }) {
   } catch (e) {
     let message = e;
     if (e instanceof Error && "message" in e)
-      message = `Operation failed. ${message}`;
+      message = `Operation failed. ${e.message}`;
 
     messageUser(message, "error");
   }
